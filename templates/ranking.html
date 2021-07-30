@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ranking</title>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+    <script>
+        var socket = io()
+        var value_map = {}
+        const data = {
+          datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: value_map,
+          }]
+        };
+
+        const config = {
+          type: 'line',
+          data,
+          options: {}
+        };
+
+        var myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+        socket.on('connect', () => {
+            socket.emit('message', "test")
+        })
+        socket.on('data', (data) => {
+            var d = JSON.parse(data)
+            console.log(d)
+            if (!(d.name in value_map)){
+                value_map[d.name] = d.count
+            }
+            else {
+                value_map[d.name] = d.count
+            }
+            myChart.update()
+        })
+    </script>
+</body>
+</html>
